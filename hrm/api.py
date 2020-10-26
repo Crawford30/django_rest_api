@@ -20,7 +20,6 @@ class UserList(APIView):
 		#get the model to be passed in the serialzer
 
 		model = Users.objects.all() #what do we need to display, display emplyee inside the hrm, hence we import serialize
-
 		serializer = UsersSerializer(model, many=True) #many=True means return all the items
 		return Response(serializer.data) #serializer from  serializer = UsersSerializers(model, many=True)
 
@@ -34,7 +33,7 @@ class UserList(APIView):
 
 
 
-	##Different urls, we need to create diff class
+	##Different urls, we need to create diff class as well, we need employee id in get and put
 class UserDetail(APIView):
 	def get(self, request, employee_id):
 		#Besides reques we also need emplooye id, we need employee_id in get and put
@@ -52,13 +51,13 @@ class UserDetail(APIView):
 
 	def put(self, request, employee_id):
 		try:
-			model = Users.objects.get(id=employee_id) # we get if id is equal to employee_id
+			model = Users.objects.get(id=employee_id)
 		except Users.DoesNotExist:
-			return Response(f'User with {employee_id} is Not Found in the database', status=status.HTTP_404_NOT_FOUND)
-		
-		#we need a serializer when creating a post object
-		serializer = UsersSerializer(model, data=request.data)  # we provide our data
+			return  Response(f"User with {employee_id} is not found in the database", status=status.HTTP_404_NOT_FOUND)
+
+		serializer = UsersSerializer(model, data=request.data)
+
 		if serializer.is_valid():
 			serializer.save()
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+			return  Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

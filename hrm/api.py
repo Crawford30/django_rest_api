@@ -21,8 +21,7 @@ class UserList(APIView):
 
 		model = Users.objects.all() #what do we need to display, display emplyee inside the hrm, hence we import serialize
 		serializer = UsersSerializer(model, many=True) #many=True means return all the items
-		return 
-		#Response(serializer.data) #serializer from  serializer = UsersSerializers(model, many=True)
+		return Response(serializer.data) #serializer from  serializer = UsersSerializers(model, many=True)
 
 	def post(self, request):
 		#we need a serializer when creating a post object

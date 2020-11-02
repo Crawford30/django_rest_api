@@ -51,7 +51,7 @@ class UserDetail(APIView):
 
 	def get(self, request, employee_id):
 		if not self.get_user(employee_id):
-			Response(f'User with {employee_id} is Not Found in the database', status=status.HTTP_404_NOT_FOUND)
+			return Response(f'User with {employee_id} is Not Found in the database', status=status.HTTP_404_NOT_FOUND)
 		serializer = UsersSerializer(self.get_user(employee_id))
 		return Response(serializer.data) #serializer from  serializer = UsersSerializers(model, many=True)
 		#Besides reques we also need emplooye id, we need employee_id in get and put
@@ -71,10 +71,13 @@ class UserDetail(APIView):
 		
 
 	def put(self, request, employee_id):
-		try:
-			model = Users.objects.get(id=employee_id)
-		except Users.DoesNotExist:
-			return  Response(f"User with {employee_id} is not found in the database", status=status.HTTP_404_NOT_FOUND)
+		if not self.get_user(employee_id):
+			return Response(f'User with {employee_id} is Not Found in the database', status=status.HTTP_404_NOT_FOUND)
+
+		# try:
+		# 	model = Users.objects.get(id=employee_id)
+		# except Users.DoesNotExist:
+		# 	return  Response(f"User with {employee_id} is not found in the database", status=status.HTTP_404_NOT_FOUND)
 
 		serializer = UsersSerializer(model, data=request.data)
 
@@ -86,6 +89,8 @@ class UserDetail(APIView):
 
 	#Delete function, takes the same arugument as put, request and id
 	def delete(self, request, employee_id):
+		if not self.get_user(employee_id):
+			return Response(f'User with {employee_id} is Not Found in the database', status=status.HTTP_404_NOT_FOUND)
 		model = self.get_user(employee_id)
 
 		#call delete fucntion on model, and return a response once we delete
